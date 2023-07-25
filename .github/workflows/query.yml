@@ -1,0 +1,67 @@
+name: query
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Environment
+        required: true
+        options:
+          - alphanet
+          - testnet
+          - axon
+      jmeterJmx:
+        type: choice
+        description: Make a choice of jmx
+        required: true
+        options:
+          - getBalance.jmx
+          - getBlockByNumber.jmx
+          - ethCall.jmx
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Set rpcUrl
+        run: |
+          case "${{ github.event.inputs.env }}" in
+            "alphanet")
+              echo "rpcUrl=https://godwoken-alphanet-v1.ckbapp.dev" >> $GITHUB_ENV
+              echo "to=0x93b2043d4aC9b2565F44A86682ae12a01400FB33" >> $GITHUB_ENV
+              ;;
+            "testnet")
+              echo "rpcUrl=https://v1.testnet.godwoken.io/rpc" >> $GITHUB_ENV
+              echo "to=0x6701bf03c0483c844d231246bbbbd6e1851c7ab1" >> $GITHUB_ENV
+              ;;
+            "axon")
+              echo "rpcUrl=http://34.216.103.183:8000" >> $GITHUB_ENV
+              echo "to=0xa6F376F9366A400579DD99e1d00363DbC5d3509F" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "Invalid environment specified."
+              exit 1
+              ;;
+          esac
+
+      - name: Build with Maven
+        run: mvn clean package --file pom.xml -q
+
+      - name: jmeter run
+        run: |
+          echo "rpcUrl: ${{ env.rpcUrl }}"
+          sed -i 's|<stringProp name="Argument.value">rpcUrlValue</stringProp>|<stringProp name="Argument.value">${{ env.rpcUrl }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+          if [ "${{ github.event.inputs.jmeterJmx }}" = "ethCall.jmx" ]; then
+            sed -i 's|<stringProp name="Argument.value">toAddress</stringProp>|<stringProp name="Argument.value">${{ env.to }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+          fi
+          mvn jmeter:jmeter@configuration2 -DjmeterTest=${{ github.event.inputs.jmeterJmx }}

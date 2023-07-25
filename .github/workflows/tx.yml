@@ -1,0 +1,107 @@
+name: tx
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Environment
+        required: true
+        options:
+          - alphanet
+          - testnet
+          - axon
+      jmeterJmx:
+        type: choice
+        description: Make a choice of jmx
+        required: true
+        options:
+          - nativeTransfer.jmx
+          - swap.jmx
+      gistId:
+        description: 'Gist ID'
+        required: false
+        default: 'bd29348042f0f1f8998728895dea3e65'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Set rpcUrl, wsUrl, and gasPrice environment variables
+        run: |
+          case "${{ github.event.inputs.env }}" in
+            "alphanet")
+              echo "rpcUrl=https://godwoken-alphanet-v1.ckbapp.dev" >> $GITHUB_ENV
+              echo "wsUrl=wss://gw-alphanet-v1.godwoken.cf/ws" >> $GITHUB_ENV
+              echo "gasPrice=1" >> $GITHUB_ENV
+              echo "to=0x3B4D1c4EbB2a6b160f095b2f8ABae841AA6431c8" >> $GITHUB_ENV
+              echo "payload=0x7ff36ab500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000005af3107a3fff00000000000000000000000000000000000000000000000000000000000000020000000000000000000000008037bf2e6d72ae53ef8f88cc9cc09b9d058c5bb4000000000000000000000000e0196b7b2b43b6bde7d05e9ab2d9ade7d42b2e34" >> $GITHUB_ENV
+              ;;
+            "testnet")
+              echo "rpcUrl=https://v1.testnet.godwoken.io/rpc" >> $GITHUB_ENV
+              echo "wsUrl=wss://v1.testnet.godwoken.io/ws" >> $GITHUB_ENV
+              echo "gasPrice=60000000000" >> $GITHUB_ENV
+              echo "to=0x5bf585570316838d5572212f0909074df4f73988" >> $GITHUB_ENV
+              echo "payload=0x7ff36ab5000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000003499932d7a1d1850253d6c66d830e3524bb3f2a700000000000000000000000000000000000000000000000000005af3107a3fff00000000000000000000000000000000000000000000000000000000000000020000000000000000000000003ab7965043506c8917ed4c2492f32904b2894e780000000000000000000000005b273272be0ca76dfd74a368d4f9e38168d437c3" >> $GITHUB_ENV
+              ;;
+            "axon")
+              echo "rpcUrl=http://34.216.103.183:8000" >> $GITHUB_ENV
+              echo "wsUrl=ws://18.176.176.44:8010" >> $GITHUB_ENV
+              echo "gasPrice=8" >> $GITHUB_ENV
+              echo "to=0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" >> $GITHUB_ENV
+              echo "payload=0x7ff36ab500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000005af3107a3fff0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000e7f1725e7734ce288f8367e1bb143e90bb3f0512000000000000000000000000dc64a140aa3e981100a9beca4e685f962f0cf6c9" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "Invalid environment specified."
+              exit 1
+              ;;
+          esac
+
+      - name: Build with Maven
+        run: mvn clean package --file pom.xml -q
+
+      - name: Start EthStats workflow
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/sunchengzhu/eth-performance/actions/workflows/ethStats.yml/dispatches \
+            -d '{"ref":"main", "inputs": {"jarArg": "'${{ env.wsUrl }}'", "gistId": "'${{ github.event.inputs.gistId }}'"}'
+
+      - name: jmeter run
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GIST_ID: ${{ github.event.inputs.gistId }}
+        run: |
+          update_gist() {
+            cmd=$1
+            JSON_DATA=$(printf '{"description": "Updated gist","files": {"commands.txt": {"content": "%s"}}}' "$cmd")
+            curl -X PATCH -H "Authorization: token $GH_TOKEN" https://api.github.com/gists/$GIST_ID -d "${JSON_DATA}"
+          }
+          update_gist "tps"
+          echo "rpcUrl: ${{ env.rpcUrl }}"
+          echo "wsUrl: ${{ env.wsUrl }}"
+          echo "gasPrice: ${{ env.gasPrice }}"
+          sed -i 's|<stringProp name="Argument.value">rpcUrlValue</stringProp>|<stringProp name="Argument.value">${{ env.rpcUrl }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+          sed -i 's|<stringProp name="Argument.value">gasPriceValue</stringProp>|<stringProp name="Argument.value">${{ env.gasPrice }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+          if [ "${{ github.event.inputs.jmeterJmx }}" = "swap.jmx" ]; then
+            echo "to: ${{ env.to }}
+            echo "payload: ${{ env.payload }}
+            sed -i 's|<stringProp name="Argument.value">toAddress</stringProp>|<stringProp name="Argument.value">${{ env.to }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+            sed -i 's|<stringProp name="Argument.value">payloadValue</stringProp>|<stringProp name="Argument.value">${{ env.payload }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+          fi
+          mvn jmeter:jmeter@configuration2 -DjmeterTest=${{ github.event.inputs.jmeterJmx }}
+          update_gist "stopTps"
+          sleep 5
+          update_gist "successRate"
