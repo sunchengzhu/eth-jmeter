@@ -59,6 +59,24 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>uncompress</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>${basedir}/src/main/resources/stress.sh</executable>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
