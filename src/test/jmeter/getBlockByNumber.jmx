@@ -44,7 +44,7 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="classname">io.github.sunchengzhu.GetBlockByNumber</stringProp>
+          <stringProp name="classname">io.github.sunchengzhu.adapts.GetBlockByNumber</stringProp>
         </JavaSampler>
         <hashTree/>
         <kg.apc.jmeter.vizualizers.CorrectedResultCollector guiclass="kg.apc.jmeter.vizualizers.ThreadsStateOverTimeGui" testclass="kg.apc.jmeter.vizualizers.CorrectedResultCollector" testname="jp@gc - Active Threads Over Time" enabled="true">
