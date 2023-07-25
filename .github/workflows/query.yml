@@ -64,4 +64,4 @@ jobs:
           if [ "${{ github.event.inputs.jmeterJmx }}" = "ethCall.jmx" ]; then
             sed -i 's|<stringProp name="Argument.value">toAddress</stringProp>|<stringProp name="Argument.value">${{ env.to }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
           fi
-          mvn jmeter:jmeter -DjmeterTest=${{ github.event.inputs.jmeterJmx }}
+          mvn jmeter:jmeter@configuration -DjmeterTest=${{ github.event.inputs.jmeterJmx }}
