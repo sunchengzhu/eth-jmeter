@@ -5,177 +5,36 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>eth-jmeter-sample</artifactId>
+    <artifactId>eth-jmeter</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <rpcUrl>https://v1.testnet.godwoken.io/rpc</rpcUrl>
-        <BUILD_TAG>${project.version}</BUILD_TAG>
-        <jmeter.plugin.version>3.7.0</jmeter.plugin.version>
-        <encoding>UTF-8</encoding>
-        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-        <project.resources.sourceEncoding>${encoding}</project.resources.sourceEncoding>
-        <html.report>true</html.report>
         <jmeterTest>Request</jmeterTest>
     </properties>
 
-
-    <dependencies>
-
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_java</artifactId>
-            <version>5.6</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-slf4j-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>1.6.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>core</artifactId>
-            <version>5.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>crypto</artifactId>
-            <version>5.0.0</version>
-            <!--            <exclusions>-->
-            <!--                <exclusion>-->
-            <!--                    <groupId>org.bouncycastle</groupId>-->
-            <!--                    <artifactId>bcprov-jdk15on</artifactId>-->
-            <!--                </exclusion>-->
-            <!--            </exclusions>-->
-        </dependency>
-
-        <dependency>
-            <groupId>org.bitcoinj</groupId>
-            <artifactId>bitcoinj-core</artifactId>
-            <version>0.16.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcprov-jdk15to18</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.bouncycastle</groupId>-->
-        <!--            <artifactId>bcprov-jdk15on</artifactId>-->
-        <!--            <version>1.49</version>-->
-        <!--            &lt;!&ndash;            <scope>compile</scope>&ndash;&gt;-->
-        <!--        </dependency>-->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.5</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>2.17.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.10</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.9.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>1.9.8</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.9.8</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
-        </dependency>
-
-
-    </dependencies>
-
     <build>
         <plugins>
-            <!-- 打包依赖包到jar中 -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4.1</version>
                 <configuration>
-                    <!-- get all project dependencies -->
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!-- MainClass in mainfest make a executable jar -->
-                    <archive>
-                        <manifest>
-                            <mainClass>com.nervos.benchmark.BlockNumRequest</mainClass>
-                        </manifest>
-                    </archive>
-                    <!--                    <outputDirectory>../target/*/jmeter/lib/ext</outputDirectory>-->
                 </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-                        <!-- bind to the packaging phase -->
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
 
             <plugin>
@@ -184,64 +43,22 @@
                 <version>3.4.0</version>
                 <executions>
                     <execution>
-                        <id>configuration2</id>
-                        <goals>
-                            <goal>configure</goal>
-                        </goals>
-                        <configuration>
-                            <testFilesIncluded>${jmeterTest}</testFilesIncluded>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>configuration</id>
                         <goals>
                             <goal>configure</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>tests</id>
-                        <goals>
-                            <goal>jmeter</goal>
-                        </goals>
-                    </execution>
                 </executions>
                 <configuration>
-                    <excludedArtifacts>
-                        <!--                        <exclusion>org.bouncycastle:bcprov-jdk15on:1.49</exclusion>-->
-                    </excludedArtifacts>
-                    <!--                    <overrideRootLogLevel>debug</overrideRootLogLevel>-->
+                    <testFilesIncluded>${jmeterTest}</testFilesIncluded>
                     <jmeterExtensions>
-                        <!--                        <artifact>org.example:eth-jmeter-sample:1.0-SNAPSHOT</artifact>-->
                         <artifact>kg.apc:jmeter-plugins-graphs-basic:2.0</artifact>
                         <artifact>kg.apc:jmeter-plugins-graphs-additional:2.0</artifact>
                         <artifact>kg.apc:jmeter-plugins-casutg:2.10</artifact>
                     </jmeterExtensions>
-                    <propertiesUser>
-                        <rpcUrl>${rpcUrl}</rpcUrl>
-                        <jmeter.reportgenerator.report_title>Shan tonu Example</jmeter.reportgenerator.report_title>
-                        <jmeter.reportgenerator.overall_granularity>500</jmeter.reportgenerator.overall_granularity>
-                        <jmeter.reportgenerator.exporter.html.series_filter>^(-success|-failure)?$
-                        </jmeter.reportgenerator.exporter.html.series_filter>
-                        <summariser.name>summary</summariser.name>
-                        <summariser.interval>5</summariser.interval>
-                        <summariser.log>true</summariser.log>
-                        <summariser.out>true</summariser.out>
-                    </propertiesUser>
-                    <jMeterProcessJVMSettings>
-                        <xms>15360</xms>
-                        <xmx>15360</xmx>
-                        <arguments>
-                            <argument>-XX:MaxMetaspaceSize=1024m</argument>
-                        </arguments>
-                    </jMeterProcessJVMSettings>
-                    <!--                                        <testFilesExcluded>-->
-                    <!--                                            <excludeJMeterTestFile>*${jmeterTest}.jmx</excludeJMeterTestFile>-->
-                    <!--                                        </testFilesExcluded>-->
-                    <!--                    <resultsFileFormat>xml</resultsFileFormat>-->
-                    <ignoreResultFailures>true</ignoreResultFailures>
-                    <generateReports>${html.report}</generateReports>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
@@ -259,6 +76,46 @@
                     <executable>${basedir}/src/main/resources/stress.sh</executable>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_java</artifactId>
+            <version>5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>crypto</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bitcoinj</groupId>
+            <artifactId>bitcoinj-core</artifactId>
+            <version>0.16.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15to18</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
 </project>
