@@ -56,6 +56,13 @@
                         <artifact>kg.apc:jmeter-plugins-graphs-additional:2.0</artifact>
                         <artifact>kg.apc:jmeter-plugins-casutg:2.10</artifact>
                     </jmeterExtensions>
+                    <jMeterProcessJVMSettings>
+                        <xms>8192</xms>
+                        <xmx>8192</xmx>
+                        <arguments>
+                            <argument>-XX:MaxMetaspaceSize=512m</argument>
+                        </arguments>
+                    </jMeterProcessJVMSettings>
                 </configuration>
             </plugin>
 
