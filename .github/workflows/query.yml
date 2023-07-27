@@ -54,11 +54,8 @@ jobs:
               ;;
           esac
 
-      - name: Get Target
-        run: |
-          wget https://github.com/sunchengzhu/eth-jmeter/releases/download/v1.0.0/target.tar.gz
-          tar xvf target.tar.gz
-          pwd
+      - name: Build with Maven
+        run: mvn clean package --file pom.xml -q
 
       - name: jmeter run
         run: |
