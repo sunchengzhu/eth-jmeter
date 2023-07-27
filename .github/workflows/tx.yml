@@ -77,7 +77,7 @@ jobs:
             -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/sunchengzhu/eth-performance/actions/workflows/ethStats.yml/dispatches \
-            -d '{"ref":"main", "inputs": {"jarArg": "'${{ env.wsUrl }}'", "gistId": "'${{ github.event.inputs.gistId }}'"}'
+            -d '{"ref":"main", "inputs": {"jarArg": "${{ env.wsUrl }}", "gistId": "${{ github.event.inputs.gistId }}"}'
 
       - name: jmeter run
         env:
