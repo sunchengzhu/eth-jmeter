@@ -63,6 +63,10 @@
                             <argument>-XX:MaxMetaspaceSize=512m</argument>
                         </arguments>
                     </jMeterProcessJVMSettings>
+                    <propertiesUser>
+                        <summariser.log>true</summariser.log>
+                        <summariser.interval>5</summariser.interval>
+                    </propertiesUser>
                 </configuration>
             </plugin>
 
