@@ -100,6 +100,7 @@ jobs:
           echo "gasPrice: ${{ env.gasPrice }}"
           sed -i 's|<stringProp name="Argument.value">rpcUrlValue</stringProp>|<stringProp name="Argument.value">${{ env.rpcUrl }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
           sed -i 's|<stringProp name="Argument.value">gasPriceValue</stringProp>|<stringProp name="Argument.value">${{ env.gasPrice }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
+          sed -i 's|<stringProp name="Argument.value">mnemonicValue</stringProp>|<stringProp name="Argument.value">${{ github.event.inputs.mnemonic }}</stringProp>|g' src/test/jmeter/${{ github.event.inputs.jmeterJmx }}
           if [ "${{ github.event.inputs.jmeterJmx }}" = "swap.jmx" ]; then
             echo "to: ${{ env.to }}
             echo "payload: ${{ env.payload }}

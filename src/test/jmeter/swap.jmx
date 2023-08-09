@@ -39,7 +39,7 @@
               </elementProp>
               <elementProp name="Mnemonic" elementType="Argument">
                 <stringProp name="Argument.name">Mnemonic</stringProp>
-                <stringProp name="Argument.value">already luggage walk truly world rent unlock quick tube actual acoustic spin</stringProp>
+                <stringProp name="Argument.value">mnemonicValue</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="size" elementType="Argument">
