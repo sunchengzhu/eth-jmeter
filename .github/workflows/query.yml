@@ -8,6 +8,7 @@ on:
         description: Environment
         required: true
         options:
+          - fantom_testnet
           - axon_alphanet
           - testnet
           - alphanet
@@ -42,6 +43,10 @@ jobs:
       - name: Set rpcUrl
         run: |
           case "${{ github.event.inputs.env }}" in
+            "fantom_testnet")
+              echo "rpcUrl=https://rpc.testnet.fantom.network" >> $GITHUB_ENV
+              echo "to=0x6Fc1E7631D24b6173d975a892ba5563E8C04CB9f" >> $GITHUB_ENV
+              ;;
             "axon_alphanet")
               echo "rpcUrl=https://rpc-alphanet-axon.ckbapp.dev" >> $GITHUB_ENV
               echo "to=0x64a8ef7A52Fc82Caf1676072E0670a17002c1840" >> $GITHUB_ENV
