@@ -8,6 +8,7 @@ on:
         description: Environment
         required: true
         options:
+          - fantom_testnet
           - axon-alphanet
           - testnet
           - alphanet
@@ -44,6 +45,13 @@ jobs:
       - name: Set rpcUrl, wsUrl, and gasPrice environment variables
         run: |
           case "${{ github.event.inputs.env }}" in
+            "fantom_testnet")
+              echo "rpcUrl=https://rpc.testnet.fantom.network" >> $GITHUB_ENV
+              echo "wsUrl=wss://fantom-testnet.public.blastapi.io/" >> $GITHUB_ENV
+              echo "gasPrice=1050000000" >> $GITHUB_ENV
+              echo "to=0x7C7087d81c5f4Bd7EA30A5e13095414395DfD4F1" >> $GITHUB_ENV
+              echo "payload=0x7ff36ab50000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000008000000000000000000000000079026e949ba3ef5c854186244d1597a369bc326d00000000000000000000000000000000000000000000000000005af3107a3fff0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000a6465996d9b1c6e82a65d4503d07ee1f68ed3a34000000000000000000000000a37614c751f37cbc54c5223254e8695024fa36c7" >> $GITHUB_ENV
+              ;;
             "axon-alphanet")
               echo "rpcUrl=https://rpc-alphanet-axon.ckbapp.dev" >> $GITHUB_ENV
               echo "wsUrl=ws://rpc-alphanet-axon.ckbapp.dev/ws" >> $GITHUB_ENV
